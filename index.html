@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Forum Diskusi Kelas</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #d9d8d9 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 1200px;
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4edb4c 0%, #47d888 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3bcb4c 0%, #57cd6b 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            margin-top: 10px;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .alert {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .dashboard {
+            display: none;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .dashboard-header h2 {
+            color: #333;
+            font-size: 2em;
+        }
+
+        .user-info {
+            text-align: right;
+        }
+
+        .user-info p {
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e0e0e0;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .materi-list {
+            display: grid;
+            gap: 20px;
+        }
+
+        .materi-item {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .materi-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .materi-item h3 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .materi-item p {
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .form-create-materi {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .forum-container {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .message {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .message-author {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .message-time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .message-content {
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .message-input-container {
+            margin-top: 20px;
+        }
+
+        .message-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+
+        .file-upload {
+            margin-top: 15px;
+            padding: 15px;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-upload:hover {
+            background: #f0f4ff;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .file-info {
+            margin-top: 10px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        .file-list {
+            margin-top: 10px;
+        }
+
+        .file-item {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 0.85em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .file-item:hover {
+            background: #5568d3;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .logout-btn {
+            padding: 8px 20px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .tabs {
+                flex-wrap: wrap;
+            }
+
+            .tab {
+                padding: 10px 16px;
+                font-size: 0.9em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📚 Forum Diskusi Kelas</h1>
+            <p>Platform Diskusi Interaktif Dosen dan Mahasiswa</p>
+        </div>
+
+        <!-- Login Page -->
+        <div class="content" id="loginPage">
+            <div class="login-container">
+                <div id="alertContainer"></div>
+                
+                <div class="form-group">
+                    <label for="userType">Masuk Sebagai:</label>
+                    <select id="userType">
+                        <option value="mahasiswa">Mahasiswa</option>
+                        <option value="dosen">Dosen</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="username" id="usernameLabel">NIM:</label>
+                    <input type="text" id="username" placeholder="Masukkan NIM">
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" placeholder="Masukkan Password">
+                </div>
+
+                <button class="btn" onclick="login()">Login</button>
+            </div>
+        </div>
+
+        <!-- Dashboard Dosen -->
+        <div class="content dashboard" id="dosenDashboard">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Dashboard Dosen</h2>
+                    <p style="color: #666; margin-top: 5px;">Selamat datang, Dosen FIP UNG</p>
+                </div>
+                <div class="user-info">
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('dosen', 'daftarMateri')">Daftar Materi</button>
+                <button class="tab" onclick="switchTab('dosen', 'buatMateri')">Buat Materi Diskusi</button>
+                <button class="tab" onclick="switchTab('dosen', 'pantauDiskusi')">Pantau Diskusi</button>
+            </div>
+
+            <div id="dosen-daftarMateri" class="tab-content active">
+                <h3 style="margin-bottom: 20px; color: #333;">Daftar Materi Diskusi</h3>
+                <div class="materi-list" id="dosenMateriList">
+                    <p style="color: #999;">Belum ada materi diskusi. Silakan buat materi baru.</p>
+                </div>
+            </div>
+
+            <div id="dosen-buatMateri" class="tab-content">
+                <h3 style="margin-bottom: 20px; color: #333;">Buat Materi Diskusi Baru</h3>
+                <div class="form-create-materi">
+                    <div class="form-group">
+                        <label for="judulMateri">Judul Materi:</label>
+                        <input type="text" id="judulMateri" placeholder="Masukkan judul materi diskusi">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="deskripsiMateri">Deskripsi:</label>
+                        <textarea id="deskripsiMateri" class="message-input" placeholder="Masukkan deskripsi materi"></textarea>
+                    </div>
+
+                    <div class="file-upload" onclick="document.getElementById('fileMateri').click()">
+                        <p>📎 Klik untuk upload file materi (max 5MB per file)</p>
+                        <input type="file" id="fileMateri" multiple onchange="handleFileSelect(event)">
+                        <div class="file-info" id="fileInfo"></div>
+                    </div>
+
+                    <button class="btn" style="margin-top: 20px;" onclick="createMateri()">Buat Materi</button>
+                </div>
+            </div>
+
+            <div id="dosen-pantauDiskusi" class="tab-content">
+                <h3 style="margin-bottom: 20px; color: #333;">Pantau Diskusi Mahasiswa</h3>
+                <div id="dosenForumContainer"></div>
+            </div>
+        </div>
+
+        <!-- Dashboard Mahasiswa -->
+        <div class="content dashboard" id="mahasiswaDashboard">
+            <div class="dashboard-header">
+                <div>
+                    <h2>Dashboard Mahasiswa</h2>
+                    <p style="color: #666; margin-top: 5px;" id="mahasiswaName"></p>
+                </div>
+                <div class="user-info">
+                    <button class="logout-btn" onclick="logout()">Logout</button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('mahasiswa', 'daftarMateri')">Daftar Materi</button>
+                <button class="tab" onclick="switchTab('mahasiswa', 'forum')">Forum Diskusi</button>
+            </div>
+
+            <div id="mahasiswa-daftarMateri" class="tab-content active">
+                <h3 style="margin-bottom: 20px; color: #333;">Daftar Materi Diskusi</h3>
+                <div class="materi-list" id="mahasiswaMateriList">
+                    <p style="color: #999;">Belum ada materi diskusi tersedia.</p>
+                </div>
+            </div>
+
+            <div id="mahasiswa-forum" class="tab-content">
+                <h3 style="margin-bottom: 20px; color: #333;">Forum Diskusi</h3>
+                <div id="mahasiswaForumContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================
+         GANTI BAGIAN INI DENGAN FIREBASE CONFIG
+         ======================================== -->
+    <script type="module">
+        // Import Firebase modules (HANYA DATABASE)
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getDatabase, ref, push, onValue, set, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
+
+        // ===== GANTI DENGAN CONFIG FIREBASE ANDA =====
+       const firebaseConfig = {
+             apiKey: "AIzaSyBU4OUJyhH1ITNH4HEhNIPHFuEPuLAbPO8",
+             authDomain: "tugas-akhir-sim.firebaseapp.com",
+             databaseURL: "https://tugas-akhir-sim-default-rtdb.asia-southeast1.firebasedatabase.app",
+             projectId: "tugas-akhir-sim",
+             storageBucket: "tugas-akhir-sim.firebasestorage.app",
+             messagingSenderId: "333748331960",
+             appId: "1:333748331960:web:1ea8ed983a06ea044a1b4d",
+       measurementId: "G-FGMYTZ5MXM"
+};
+        // ============================================
+
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Export untuk digunakan di global scope
+        window.firebaseDB = database;
+        window.firebaseRef = ref;
+        window.firebasePush = push;
+        window.firebaseOnValue = onValue;
+        window.firebaseSet = set;
+        window.firebaseServerTimestamp = serverTimestamp;
+    </script>
+    <!-- ======================================== -->
+
+    <script>
+        // Data mahasiswa
+        const mahasiswaData = {
+            '131424061': 'HAIDIL RUDIN',
+            '131424062': 'Sri Rahmawati Noho',
+            '131424063': 'Citra bague',
+            '131424064': 'Moh Lail Nasaru',
+            '131424065': 'cindrawati pulubuhu',
+            '131424066': 'priskawati moha',
+            '131424067': 'Siti Y. Nggiu',
+            '131424068': 'Salwa Sulistia Ismail',
+            '131424069': 'Defiyana Dina',
+            '131424070': 'Rina Amelia Pakaya',
+            '131424071': 'Tiara safitri',
+            '131424072': 'Nurjannah A.palilati',
+            '131424073': 'Noldi Laudengi',
+            '131424074': 'Neyza Usman',
+            '131424076': 'Eyon Pakaya',
+            '131424077': 'ferlina siolimbona',
+            '131424078': 'Adelia Nurqamaria Hamid',
+            '131424079': 'Ramadan Nusura',
+            '131424080': 'Zahwa Aulia Ramadhani Bakari',
+            '131424081': 'friska pou',
+            '131424082': 'cici Fadila Husain',
+            '131424083': 'Adelia Saleh',
+            '131424084': 'indriani abdullah',
+            '131424085': 'Muh Rianda Putra Paputungan',
+            '131424086': 'Aulia Aprilia Ishak',
+            '131424088': 'Moh Fauzan supu',
+            '131424089': 'Nur reysa praning ahmad',
+            '131424090': 'Ryan Van Gobel'
+        };
+
+        let currentUser = null;
+        let selectedFiles = [];
+        let currentMateriId = null;
+
+        // Change label based on user type
+        document.getElementById('userType').addEventListener('change', function() {
+            const label = document.getElementById('usernameLabel');
+            const input = document.getElementById('username');
+            
+            if (this.value === 'dosen') {
+                label.textContent = 'Username:';
+                input.placeholder = 'Masukkan Username';
+            } else {
+                label.textContent = 'NIM:';
+                input.placeholder = 'Masukkan NIM';
+            }
+        });
+
+        // Login function
+        function login() {
+            const userType = document.getElementById('userType').value;
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                showAlert('Mohon isi semua field!', 'error');
+                return;
+            }
+
+            if (userType === 'dosen') {
+                if (username === 'dosenfipung' && password === 'ungmengajar') {
+                    currentUser = {
+                        type: 'dosen',
+                        username: 'dosenfipung',
+                        name: 'Dosen FIP UNG'
+                    };
+                    showDashboard('dosen');
+                    loadMateriList();
+                } else {
+                    showAlert('Username atau password salah!', 'error');
+                }
+            } else {
+                if (mahasiswaData[username] && password === 'kampus2025') {
+                    currentUser = {
+                        type: 'mahasiswa',
+                        nim: username,
+                        name: mahasiswaData[username]
+                    };
+                    document.getElementById('mahasiswaName').textContent = `${mahasiswaData[username]} (${username})`;
+                    showDashboard('mahasiswa');
+                    loadMateriList();
+                } else {
+                    showAlert('NIM atau password salah!', 'error');
+                }
+            }
+        }
+
+        // Show alert
+        function showAlert(message, type) {
+            const alertContainer = document.getElementById('alertContainer');
+            const alertClass = type === 'error' ? 'alert-error' : 'alert-success';
+            alertContainer.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                alertContainer.innerHTML = '';
+            }, 3000);
+        }
+
+        // Show dashboard
+        function showDashboard(type) {
+            document.getElementById('loginPage').style.display = 'none';
+            if (type === 'dosen') {
+                document.getElementById('dosenDashboard').style.display = 'block';
+            } else {
+                document.getElementById('mahasiswaDashboard').style.display = 'block';
+            }
+        }
+
+        // Logout
+        function logout() {
+            currentUser = null;
+            currentMateriId = null;
+            document.getElementById('loginPage').style.display = 'block';
+            document.getElementById('dosenDashboard').style.display = 'none';
+            document.getElementById('mahasiswaDashboard').style.display = 'none';
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+        }
+
+        // Switch tab
+        function switchTab(userType, tabName) {
+            const tabs = document.querySelectorAll(`#${userType}Dashboard .tab`);
+            const contents = document.querySelectorAll(`#${userType}Dashboard .tab-content`);
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            contents.forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${userType}-${tabName}`).classList.add('active');
+
+            if (tabName === 'pantauDiskusi' || tabName === 'forum') {
+                loadForumMessages();
+            }
+        }
+
+        // Handle file select
+        function handleFileSelect(event) {
+            const files = Array.from(event.target.files);
+            const maxSize = 5 * 1024 * 1024; // 5MB
+            
+            selectedFiles = [];
+            let errorMessage = '';
+
+            files.forEach(file => {
+                if (file.size > maxSize) {
+                    errorMessage += `${file.name} terlalu besar (max 5MB)\n`;
+                } else {
+                    selectedFiles.push(file);
+                }
+            });
+
+            if (errorMessage) {
+                alert(errorMessage);
+            }
+
+            const fileInfo = document.getElementById('fileInfo');
+            
+            if (selectedFiles.length > 0) {
+                fileInfo.innerHTML = `<strong>${selectedFiles.length} file dipilih:</strong><br>` + 
+                    selectedFiles.map(f => `${f.name} (${(f.size / 1024).toFixed(2)} KB)`).join('<br>');
+            } else {
+                fileInfo.innerHTML = '';
+            }
+        }
+
+        // Convert file to base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Create materi
+        async function createMateri() {
+            const judul = document.getElementById('judulMateri').value.trim();
+            const deskripsi = document.getElementById('deskripsiMateri').value.trim();
+
+            if (!judul || !deskripsi) {
+                alert('Mohon isi judul dan deskripsi materi!');
+                return;
+            }
+
+            try {
+                const materiData = {
+                    judul: judul,
+                    deskripsi: deskripsi,
+                    createdBy: currentUser.name,
+                    createdAt: Date.now(),
+                    files: []
+                };
+
+                // Convert files to base64 and save in database
+                if (selectedFiles.length > 0) {
+                    alert('Sedang mengupload file, mohon tunggu...');
+                    
+                    for (let file of selectedFiles) {
+                        const base64 = await fileToBase64(file);
+                        materiData.files.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: base64
+                        });
+                    }
+                }
+
+                // Save to database
+                const materiRef = window.firebaseRef(window.firebaseDB, 'materi');
+                await window.firebasePush(materiRef, materiData);
+
+                alert('Materi berhasil dibuat!');
+                document.getElementById('judulMateri').value = '';
+                document.getElementById('deskripsiMateri').value = '';
+                document.getElementById('fileMateri').value = '';
+                document.getElementById('fileInfo').innerHTML = '';
+                selectedFiles = [];
+
+                switchTab('dosen', 'daftarMateri');
+                loadMateriList();
+            } catch (error) {
+                console.error('Error creating materi:', error);
+                alert('Gagal membuat materi. Silakan coba lagi.');
+            }
+        }
+
+        // Load materi list
+        function loadMateriList() {
+            const materiRef = window.firebaseRef(window.firebaseDB, 'materi');
+            
+            window.firebaseOnValue(materiRef, (snapshot) => {
+                const dosenList = document.getElementById('dosenMateriList');
+                const mahasiswaList = document.getElementById('mahasiswaMateriList');
+                
+                dosenList.innerHTML = '';
+                mahasiswaList.innerHTML = '';
+
+                if (snapshot.exists()) {
+                    const materiData = snapshot.val();
+                    
+                    Object.keys(materiData).forEach(key => {
+                        const materi = materiData[key];
+                        const materiItem = createMateriItem(key, materi);
+                        
+                        dosenList.innerHTML += materiItem;
+                        
+                        const mahasiswaItem = createMateriItemMahasiswa(key, materi);
+                        mahasiswaList.innerHTML += mahasiswaItem;
+                    });
+                } else {
+                    dosenList.innerHTML = '<p style="color: #999;">Belum ada materi diskusi. Silakan buat materi baru.</p>';
+                    mahasiswaList.innerHTML = '<p style="color: #999;">Belum ada materi diskusi tersedia.</p>';
+                }
+            });
+        }
+
+        // Download file from base64
+        function downloadFile(fileName, base64Data) {
+            const link = document.createElement('a');
+            link.href = base64Data;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Create materi item HTML
+        function createMateriItem(id, materi) {
+            let filesHtml = '';
+            
+            if (materi.files && materi.files.length > 0) {
+                filesHtml = '<div class="file-list">';
+                materi.files.forEach((file, index) => {
+                    filesHtml += `<span class="file-item" onclick='downloadFile("${file.name}", \`${file.data}\`)'>📥 ${file.name}</span>`;
+                });
+                filesHtml += '</div>';
+            }
+            
+            const date = materi.createdAt ? new Date(materi.createdAt).toLocaleDateString('id-ID') : '';
+            
+            return `
+                <div class="materi-item" onclick="viewMateriDiskusi('${id}')">
+                    <h3>${materi.judul}</h3>
+                    <p>${materi.deskripsi}</p>
+                    ${filesHtml}
+                    <p style="margin-top: 10px;"><small>Dibuat oleh: ${materi.createdBy} | ${date}</small></p>
+                </div>
+            `;
+        }
+
+        // Create materi item for mahasiswa
+        function createMateriItemMahasiswa(id, materi) {
+            let filesHtml = '';
+            
+            if (materi.files && materi.files.length > 0) {
+                filesHtml = '<div class="file-list">';
+                materi.files.forEach((file, index) => {
+                    filesHtml += `<span class="file-item" onclick='event.stopPropagation(); downloadFile("${file.name}", \`${file.data}\`)'>📥 ${file.name}</span>`;
+                });
+                filesHtml += '</div>';
+            }
+            
+            const date = materi.createdAt ? new Date(materi.createdAt).toLocaleDateString('id-ID') : '';
+            
+            return `
+                <div class="materi-item" onclick="joinForum('${id}')">
+                    <h3>${materi.judul}</h3>
+                    <p>${materi.deskripsi}</p>
+                    ${filesHtml}
+                    <p style="margin-top: 10px;"><small>Dibuat oleh: ${materi.createdBy} | ${date}</small></p>
+                    <p style="margin-top: 5px; color: #667eea;"><strong>Klik untuk bergabung ke forum diskusi</strong></p>
+                </div>
+            `;
+        }
+
+        // View materi diskusi (for dosen)
+        function viewMateriDiskusi(materiId) {
+            currentMateriId = materiId;
+            switchTab('dosen', 'pantauDiskusi');
+            loadForumMessages();
+        }
+
+        // Join forum (for mahasiswa)
+        function joinForum(materiId) {
+            currentMateriId = materiId;
+            switchTab('mahasiswa', 'forum');
+            loadForumMessages();
+        }
+
+        // Load forum messages
+        function loadForumMessages() {
+            if (!currentMateriId) {
+                const container = currentUser.type === 'dosen' 
+                    ? document.getElementById('dosenForumContainer')
+                    : document.getElementById('mahasiswaForumContainer');
+                container.innerHTML = '<p style="color: #999;">Pilih materi diskusi terlebih dahulu.</p>';
+                return;
+            }
+
+            const messagesRef = window.firebaseRef(window.firebaseDB, `forum/${currentMateriId}`);
+            
+            window.firebaseOnValue(messagesRef, (snapshot) => {
+                const container = currentUser.type === 'dosen' 
+                    ? document.getElementById('dosenForumContainer')
+                    : document.getElementById('mahasiswaForumContainer');
+                
+                let html = '<div class="forum-container" id="messagesContainer">';
+                
+                if (snapshot.exists()) {
+                    const messages = snapshot.val();
+                    const messageArray = Object.keys(messages).map(key => ({
+                        id: key,
+                        ...messages[key]
+                    }));
+                    
+                    // Sort by timestamp
+                    messageArray.sort((a, b) => a.timestamp - b.timestamp);
+                    
+                    messageArray.forEach(msg => {
+                        html += createMessageHTML(msg);
+                    });
+                } else {
+                    html += '<p style="color: #999;">Belum ada diskusi. Mulai diskusi pertama!</p>';
+                }
+                
+                html += '</div>';
+                html += createMessageInputHTML();
+                
+                container.innerHTML = html;
+                
+                // Scroll to bottom
+                setTimeout(() => {
+                    const messagesContainer = document.getElementById('messagesContainer');
+                    if (messagesContainer) {
+                        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                    }
+                }, 100);
+            });
+        }
+
+        // Create message HTML
+        function createMessageHTML(message) {
+            const time = message.timestamp ? new Date(message.timestamp).toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'Baru saja';
+            
+            const authorLabel = message.authorType === 'dosen' ? '👨‍🏫 ' : '👨‍🎓 ';
+            
+            return `
+                <div class="message">
+                    <div class="message-header">
+                        <span class="message-author">${authorLabel}${message.author}</span>
+                        <span class="message-time">${time}</span>
+                    </div>
+                    <div class="message-content">${message.content}</div>
+                </div>
+            `;
+        }
+
+        // Create message input HTML
+        function createMessageInputHTML() {
+            return `
+                <div class="message-input-container">
+                    <textarea id="messageInput" class="message-input" placeholder="Tulis pesan diskusi Anda..."></textarea>
+                    <button class="btn" style="margin-top: 10px;" onclick="sendMessage()">Kirim Pesan</button>
+                </div>
+            `;
+        }
+
+        // Send message
+        async function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const content = messageInput.value.trim();
+
+            if (!content) {
+                alert('Mohon tulis pesan terlebih dahulu!');
+                return;
+            }
+
+            if (!currentMateriId) {
+                alert('Pilih materi diskusi terlebih dahulu!');
+                return;
+            }
+
+            try {
+                const messageData = {
+                    author: currentUser.name,
+                    authorType: currentUser.type,
+                    content: content,
+                    timestamp: Date.now()
+                };
+
+                const messagesRef = window.firebaseRef(window.firebaseDB, `forum/${currentMateriId}`);
+                await window.firebasePush(messagesRef, messageData);
+
+                messageInput.value = '';
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Gagal mengirim pesan. Silakan coba lagi.');
+            }
+        }
+
+        // Make functions global
+        window.login = login;
+        window.logout = logout;
+        window.switchTab = switchTab;
+        window.handleFileSelect = handleFileSelect;
+        window.createMateri = createMateri;
+        window.viewMateriDiskusi = viewMateriDiskusi;
+        window.joinForum = joinForum;
+        window.sendMessage = sendMessage;
+        window.downloadFile = downloadFile;
+
+        // Add enter key support for login
+        document.getElementById('password').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Add enter key support for sending message (Ctrl+Enter)
+        document.addEventListener('keydown', function(event) {
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput && event.target === messageInput) {
+                if (event.ctrlKey && event.key === 'Enter') {
+                    sendMessage();
+                }
+            }
+        });
+    </script>
+</body>
+</html>
