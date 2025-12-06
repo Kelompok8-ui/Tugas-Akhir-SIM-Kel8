@@ -13,7 +13,7 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #d9d8d9 100%);
+            background: linear-gradient(135deg, #ffffff 0%, #cbcbcb 100%);
             min-height: 100vh;
             display: flex;
             justify-content: center;
@@ -31,7 +31,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #4edb4c 0%, #47d888 100%);
+            background: linear-gradient(135deg, #435fdc 0%, #7f96ec 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -86,7 +86,7 @@
         .btn {
             width: 100%;
             padding: 14px;
-            background: linear-gradient(135deg, #3bcb4c 0%, #57cd6b 100%);
+            background: linear-gradient(135deg, #334dc2 0%, #667bc0 100%);
             color: white;
             border: none;
             border-radius: 8px;
@@ -108,6 +108,10 @@
 
         .btn-danger {
             background: #dc3545;
+        }
+
+        .btn-success {
+            background: #28a745;
         }
 
         .alert {
@@ -228,8 +232,9 @@
             background: #f8f9fa;
             padding: 20px;
             border-radius: 10px;
-            max-height: 500px;
+            max-height: 400px;
             overflow-y: auto;
+            margin-bottom: 20px;
         }
 
         .message {
@@ -344,6 +349,102 @@
             color: #667eea;
         }
 
+        /* Kesimpulan Section */
+        .kesimpulan-section {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .kesimpulan-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .kesimpulan-header h4 {
+            color: #856404;
+            font-size: 1.2em;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .kesimpulan-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+
+        .kesimpulan-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #ffc107;
+        }
+
+        .kesimpulan-item-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .kesimpulan-author {
+            font-weight: 600;
+            color: #667eea;
+            font-size: 0.95em;
+        }
+
+        .kesimpulan-time {
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .kesimpulan-content {
+            color: #333;
+            line-height: 1.6;
+            font-size: 0.95em;
+        }
+
+        .kesimpulan-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ffc107;
+            border-radius: 8px;
+            font-size: 1em;
+            resize: vertical;
+            min-height: 100px;
+            font-family: inherit;
+        }
+
+        .kesimpulan-input:focus {
+            outline: none;
+            border-color: #ff9800;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .badge-dosen {
+            background: #667eea;
+            color: white;
+        }
+
+        .badge-mahasiswa {
+            background: #28a745;
+            color: white;
+        }
+
         @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8em;
@@ -366,6 +467,12 @@
             .tab {
                 padding: 10px 16px;
                 font-size: 0.9em;
+            }
+
+            .kesimpulan-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
             }
         }
     </style>
@@ -498,7 +605,7 @@
         import { getDatabase, ref, push, onValue, set, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js';
 
         // ===== GANTI DENGAN CONFIG FIREBASE ANDA =====
-       const firebaseConfig = {
+        const firebaseConfig = {
              apiKey: "AIzaSyBU4OUJyhH1ITNH4HEhNIPHFuEPuLAbPO8",
              authDomain: "tugas-akhir-sim.firebaseapp.com",
              databaseURL: "https://tugas-akhir-sim-default-rtdb.asia-southeast1.firebasedatabase.app",
@@ -810,8 +917,7 @@
             
             return `
                 <div class="materi-item" onclick="viewMateriDiskusi('${id}')">
-                    <h3>${materi.judul}</h3>
-                    <p>${materi.deskripsi}</p>
+                    <h3>${materi.judul}</h3><p>${materi.deskripsi}</p>
                     ${filesHtml}
                     <p style="margin-top: 10px;"><small>Dibuat oleh: ${materi.createdBy} | ${date}</small></p>
                 </div>
@@ -895,8 +1001,12 @@
                 
                 html += '</div>';
                 html += createMessageInputHTML();
+                html += createKesimpulanSection();
                 
                 container.innerHTML = html;
+                
+                // Load kesimpulan
+                loadKesimpulan();
                 
                 // Scroll to bottom
                 setTimeout(() => {
@@ -939,6 +1049,138 @@
                     <button class="btn" style="margin-top: 10px;" onclick="sendMessage()">Kirim Pesan</button>
                 </div>
             `;
+        }
+
+        // Create kesimpulan section HTML
+        function createKesimpulanSection() {
+            return `
+                <div class="kesimpulan-section">
+                    <div class="kesimpulan-header">
+                        <h4>📝 Kesimpulan Materi</h4>
+                    </div>
+                    
+                    <div class="kesimpulan-list" id="kesimpulanList">
+                        <p style="color: #856404; text-align: center;">Memuat kesimpulan...</p>
+                    </div>
+                    
+                    <div style="margin-top: 15px;">
+                        <label style="display: block; margin-bottom: 8px; color: #856404; font-weight: 600;">
+                            Tulis Kesimpulan Anda:
+                        </label>
+                        <textarea id="kesimpulanInput" class="kesimpulan-input" placeholder="Tulis kesimpulan dari materi diskusi ini..."></textarea>
+                        <button class="btn btn-success" style="margin-top: 10px; width: auto; padding: 10px 30px;" onclick="submitKesimpulan()">
+                            Kirim Kesimpulan
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Load kesimpulan
+        function loadKesimpulan() {
+            if (!currentMateriId) return;
+
+            const kesimpulanRef = window.firebaseRef(window.firebaseDB, `kesimpulan/${currentMateriId}`);
+            
+            window.firebaseOnValue(kesimpulanRef, (snapshot) => {
+                const kesimpulanList = document.getElementById('kesimpulanList');
+                
+                if (!kesimpulanList) return;
+                
+                if (snapshot.exists()) {
+                    const kesimpulanData = snapshot.val();
+                    const kesimpulanArray = Object.keys(kesimpulanData).map(key => ({
+                        id: key,
+                        ...kesimpulanData[key]
+                    }));
+                    
+                    // Sort by timestamp (newest first)
+                    kesimpulanArray.sort((a, b) => b.timestamp - a.timestamp);
+                    
+                    let html = '';
+                    kesimpulanArray.forEach(kesimpulan => {
+                        html += createKesimpulanItemHTML(kesimpulan);
+                    });
+                    
+                    kesimpulanList.innerHTML = html;
+                } else {
+                    kesimpulanList.innerHTML = '<p style="color: #856404; text-align: center;">Belum ada kesimpulan. Jadilah yang pertama menulis kesimpulan!</p>';
+                }
+            });
+        }
+
+        // Create kesimpulan item HTML
+        function createKesimpulanItemHTML(kesimpulan) {
+            const time = kesimpulan.timestamp ? new Date(kesimpulan.timestamp).toLocaleString('id-ID', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            }) : 'Baru saja';
+            
+            const badgeClass = kesimpulan.authorType === 'dosen' ? 'badge-dosen' : 'badge-mahasiswa';
+            const badgeText = kesimpulan.authorType === 'dosen' ? 'DOSEN' : 'MAHASISWA';
+            
+            return `
+                <div class="kesimpulan-item">
+                    <div class="kesimpulan-item-header">
+                        <span class="kesimpulan-author">
+                            ${kesimpulan.author}
+                            <span class="badge ${badgeClass}">${badgeText}</span>
+                        </span>
+                        <span class="kesimpulan-time">${time}</span>
+                    </div>
+                    <div class="kesimpulan-content">${kesimpulan.content}</div>
+                </div>
+            `;
+        }
+
+        // Submit kesimpulan
+        async function submitKesimpulan() {
+            const kesimpulanInput = document.getElementById('kesimpulanInput');
+            const content = kesimpulanInput.value.trim();
+
+            if (!content) {
+                alert('Mohon tulis kesimpulan terlebih dahulu!');
+                return;
+            }
+
+            if (!currentMateriId) {
+                alert('Pilih materi diskusi terlebih dahulu!');
+                return;
+            }
+
+            if (content.length < 20) {
+                alert('Kesimpulan terlalu pendek. Mohon tulis minimal 20 karakter.');
+                return;
+            }
+
+            try {
+                const kesimpulanData = {
+                    author: currentUser.name,
+                    authorType: currentUser.type,
+                    content: content,
+                    timestamp: Date.now()
+                };
+
+                const kesimpulanRef = window.firebaseRef(window.firebaseDB, `kesimpulan/${currentMateriId}`);
+                await window.firebasePush(kesimpulanRef, kesimpulanData);
+
+                kesimpulanInput.value = '';
+                alert('Kesimpulan berhasil dikirim!');
+                
+                // Scroll to kesimpulan list
+                setTimeout(() => {
+                    const kesimpulanList = document.getElementById('kesimpulanList');
+                    if (kesimpulanList) {
+                        kesimpulanList.scrollTop = 0;
+                    }
+                }, 200);
+            } catch (error) {
+                console.error('Error submitting kesimpulan:', error);
+                alert('Gagal mengirim kesimpulan. Silakan coba lagi.');
+            }
         }
 
         // Send message
@@ -984,6 +1226,7 @@
         window.joinForum = joinForum;
         window.sendMessage = sendMessage;
         window.downloadFile = downloadFile;
+        window.submitKesimpulan = submitKesimpulan;
 
         // Add enter key support for login
         document.getElementById('password').addEventListener('keypress', function(event) {
@@ -995,9 +1238,17 @@
         // Add enter key support for sending message (Ctrl+Enter)
         document.addEventListener('keydown', function(event) {
             const messageInput = document.getElementById('messageInput');
+            const kesimpulanInput = document.getElementById('kesimpulanInput');
+            
             if (messageInput && event.target === messageInput) {
                 if (event.ctrlKey && event.key === 'Enter') {
                     sendMessage();
+                }
+            }
+            
+            if (kesimpulanInput && event.target === kesimpulanInput) {
+                if (event.ctrlKey && event.key === 'Enter') {
+                    submitKesimpulan();
                 }
             }
         });
